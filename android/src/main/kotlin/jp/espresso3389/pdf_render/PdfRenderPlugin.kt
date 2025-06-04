@@ -48,7 +48,8 @@ class PdfRenderPlugin: FlutterPlugin, MethodCallHandler {
     try {
       when {
         call.method == "file" -> {
-          val pdfFilePath = call.arguments as String
+          val pdfFileUri = call.arguments as HashMap<String, Any>
+          val pdfFilePath = pdfFileUri["uri"] as String
           result.success(registerNewDoc(openFileDoc(call.arguments as String)))
         }
         call.method == "asset" -> {

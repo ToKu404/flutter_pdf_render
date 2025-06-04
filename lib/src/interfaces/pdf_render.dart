@@ -40,10 +40,14 @@ abstract class PdfDocument {
 
   Future<void> dispose();
 
-  /// Opening the specified file.
-  /// For Web, [filePath] can be relative path from `index.html` or any arbitrary URL but it may be restricted by CORS.
-  static Future<PdfDocument> openFile(String filePath) =>
-      PdfRenderPlatform.instance.openFile(filePath);
+  /// Opening the specified file uri.
+  /// For Web, [uri] can be relative path from `index.html` or any arbitrary URL but it may be restricted by CORS.
+  ///
+  /// You can specify [headers] to pass additional HTTP headers when opening a URL.
+  /// For example, you can use it to pass an authentication token or other custom headers.
+  /// Currently it only works for Web.
+  static Future<PdfDocument> openUri(String uri, {Map<String, String>? headers}) =>
+      PdfRenderPlatform.instance.openUri(uri, headers: headers);
 
   /// Opening the specified asset.
   static Future<PdfDocument> openAsset(String name) =>
@@ -57,7 +61,7 @@ abstract class PdfDocument {
   Future<PdfPage> getPage(int pageNumber);
 
   @override
-  bool operator ==(dynamic other);
+  bool operator ==(Object other);
 
   @override
   int get hashCode;
@@ -105,7 +109,7 @@ abstract class PdfPage {
   });
 
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       other is PdfPage &&
       other.document == document &&
       other.pageNumber == pageNumber;

@@ -119,7 +119,7 @@ class PdfDocumentLoader extends StatefulWidget {
   }) =>
       PdfDocumentLoader(
         key: key,
-        doc: PdfDocument.openFile(filePath),
+        doc: PdfDocument.openUri(filePath),
         documentBuilder: documentBuilder,
         pageNumber: pageNumber,
         pageBuilder: pageBuilder,
@@ -991,7 +991,7 @@ class PdfViewer extends StatefulWidget {
   }) =>
       PdfViewer(
         key: key,
-        doc: PdfDocument.openFile(filePath),
+        doc: PdfDocument.openUri(filePath),
         viewerController: viewerController,
         params: params,
         onError: onError,
@@ -1041,7 +1041,7 @@ class PdfViewer extends StatefulWidget {
   }) =>
       openFuture(
         getFilePath,
-        PdfDocument.openFile,
+        PdfDocument.openUri,
         key: key,
         viewerController: viewerController,
         params: params,

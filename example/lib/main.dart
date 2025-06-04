@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
       final file = (await DefaultCacheManager().getSingleFile(
               'https://github.com/espresso3389/flutter_pdf_render/raw/master/example/assets/hello.pdf'))
           .path;
-      doc = await PdfDocument.openFile(file);
+      doc = await PdfDocument.openUri(file);
     } else {
       doc = await PdfDocument.openAsset('assets/hello.pdf');
     }

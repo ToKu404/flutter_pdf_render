@@ -36,9 +36,15 @@ class PdfRenderWebPlugin {
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
     switch (call.method) {
-      case 'file':
+      case 'uri':
         {
-          final doc = await pdfjsGetDocument(call.arguments as String);
+          final args = Map<String, dynamic>.from(call.arguments as Map<dynamic, dynamic>);
+          final uri = args['uri'] as String;
+          final headers = args['headers'] as Map<dynamic, dynamic>?;
+          final doc = await pdfjsGetDocument(
+            uri,
+            headers: headers != null ? Map<String, String>.from(headers) : null,
+          );
           return _setDoc(doc);
         }
       case 'asset':

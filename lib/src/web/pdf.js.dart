@@ -37,8 +37,8 @@ Future<PdfjsDocument> _pdfjsGetDocumentJsParams(Map<String, dynamic> jsParams) {
       _pdfjsGetDocument(jsify(_getParams(jsParams))).promise);
 }
 
-Future<PdfjsDocument> pdfjsGetDocument(String url) =>
-    _pdfjsGetDocumentJsParams({'url': url});
+Future<PdfjsDocument> pdfjsGetDocument(String url, {Map<String, dynamic>? headers}) =>
+    _pdfjsGetDocumentJsParams({'url': url, 'httpHeaders': headers});
 
 Future<PdfjsDocument> pdfjsGetDocumentFromData(ByteBuffer data) =>
     _pdfjsGetDocumentJsParams({'data': data});

@@ -27,8 +27,8 @@ abstract class PdfRenderPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  /// Opening the specified file.
-  Future<PdfDocument> openFile(String filePath);
+  /// Opening the specified file uri.
+  Future<PdfDocument> openUri(String uri, {Map<String, String>? headers});
 
   /// Opening the specified asset.
   Future<PdfDocument> openAsset(String name);

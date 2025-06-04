@@ -62,9 +62,9 @@ public class SwiftPdfRenderPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     do {
-      if call.method == "file"
+      if call.method == "uri"
       {
-        guard let pdfFilePath = call.arguments as! String? else {
+        guard let pdfFileUri = call.arguments as! [String: Any]?, pdfFilePath = pdfFileUri["uri"] as! String? else {
           throw PdfRenderError.invalidArgument("Expect pdfFilePath as String")
         }
         result(try registerNewDoc(openFileDoc(pdfFilePath: pdfFilePath)))
