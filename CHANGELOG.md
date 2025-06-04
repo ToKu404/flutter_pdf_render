@@ -1,3 +1,8 @@
+## 1.4.13
+
+- Add `headers` to `PdfDocument.openUri` to support custom HTTP headers
+- Rename `openFile` to `openUri`
+
 ## 1.4.12
 
 - Merge PR #148 to handle click outside page view
