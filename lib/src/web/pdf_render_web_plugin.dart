@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:ui' as ui;
+import 'package:web/web.dart' as web;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import '../utils/web_pointer.dart';
-import '../wrappers/html.dart' as html;
-import '../wrappers/js_util.dart' as js_util;
 import 'pdf.js.dart';
 
 class PdfRenderWebPlugin {
@@ -107,7 +108,7 @@ class PdfRenderWebPlugin {
       final pageNumber = args['pageNumber'] as int;
       if (pageNumber < 1 || pageNumber > doc.numPages) return null;
       final page =
-          await js_util.promiseToFuture<PdfjsPage>(doc.getPage(pageNumber));
+          await doc.getPage(pageNumber).toDart;
       final vp1 = page.getViewport(PdfjsViewportParams(scale: 1));
       return {
         'docId': docId,
@@ -127,7 +128,7 @@ class PdfRenderWebPlugin {
   void _releaseTex(int id) {
     _textures[id]?.dispose();
     _textures.remove(id);
-    js_util.setProperty(html.window, 'pdf_render_texture_$id', null);
+    web.window.setProperty('pdf_render_texture_$id'.toJS, null);
   }
 
   Future<dynamic> _render(dynamic args) async {
@@ -186,7 +187,7 @@ class PdfRenderWebPlugin {
       throw RangeError.range(pageNumber, 1, doc.numPages, 'pageNumber');
     }
     final page =
-        await js_util.promiseToFuture<PdfjsPage>(doc.getPage(pageNumber));
+        await doc.getPage(pageNumber).toDart;
 
     final vp1 = page.getViewport(PdfjsViewportParams(scale: 1));
     final pageWidth = vp1.width;
@@ -210,27 +211,27 @@ class PdfRenderWebPlugin {
         offsetY: -y.toDouble(),
         dontFlip: dontFlip));
 
-    final canvas = html.document.createElement('canvas') as html.CanvasElement;
+    final canvas = web.document.createElement('canvas') as web.HTMLCanvasElement;
     canvas.width = width;
     canvas.height = height;
 
     if (backgroundFill) {
-      canvas.context2D.fillStyle = 'white';
+      canvas.context2D.fillStyle = 'white'.toJS;
       canvas.context2D.fillRect(0, 0, width, height);
     }
 
-    await js_util.promiseToFuture(page
+    await page
         .render(
           PdfjsRenderContext(
             canvasContext: canvas.context2D,
             viewport: vp,
           ),
         )
-        .promise);
+        .promise.toDart;
 
     final src = canvas.context2D
         .getImageData(0, 0, width, height)
-        .data
+        .data.toDart
         .buffer
         .asUint8List();
     return await handleRawData(
@@ -266,7 +267,8 @@ class PdfRenderWebPlugin {
 
         _textures[id]?.dispose();
         _textures[id] = image;
-        js_util.setProperty(html.window, 'pdf_render_texture_$id', image);
+        web.window
+            .setProperty('pdf_render_texture_$id'.toJS, image.toJSBox);
 
         _eventStreamController.sink.add(id);
         return 0;

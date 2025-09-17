@@ -1,20 +1,20 @@
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../html.dart' as html;
-import '../js_util.dart' as js_util;
+import 'package:web/web.dart' as web;
 
 class PdfTexture extends StatefulWidget {
+  const PdfTexture({required this.textureId, super.key});
+
   final int textureId;
-  const PdfTexture({required this.textureId, Key? key}) : super(key: key);
+
   @override
   PdfTextureState createState() => PdfTextureState();
 
-  ui.Image? get texture =>
-      js_util.getProperty(html.window, 'pdf_render_texture_$textureId')
-          as ui.Image?;
+  ui.Image? get texture => (web.window.getProperty('pdf_render_texture_$textureId'.toJS) as JSBoxedDartObject?)?.toDart as ui.Image?;
 }
 
 class PdfTextureState extends State<PdfTexture> {
@@ -42,11 +42,7 @@ class PdfTextureState extends State<PdfTexture> {
 
   @override
   Widget build(BuildContext context) {
-    return RawImage(
-      image: widget.texture,
-      alignment: Alignment.topLeft,
-      fit: BoxFit.fill,
-    );
+    return RawImage(image: widget.texture, alignment: Alignment.topLeft, fit: BoxFit.fill);
   }
 
   void _requestUpdate() {
@@ -59,8 +55,7 @@ class _WebTextureManager {
   static final instance = _WebTextureManager._();
 
   final _id2states = <int, List<PdfTextureState>>{};
-  final _events =
-      const EventChannel('jp.espresso3389.pdf_render/web_texture_events');
+  final _events = const EventChannel('jp.espresso3389.pdf_render/web_texture_events');
 
   _WebTextureManager._() {
     _events.receiveBroadcastStream().listen((event) {
@@ -70,8 +65,7 @@ class _WebTextureManager {
     });
   }
 
-  void register(int id, PdfTextureState state) =>
-      _id2states.putIfAbsent(id, () => []).add(state);
+  void register(int id, PdfTextureState state) => _id2states.putIfAbsent(id, () => []).add(state);
 
   void unregister(int id, PdfTextureState state) {
     final states = _id2states[id];

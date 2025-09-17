@@ -1,6 +1,7 @@
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
-import 'dart:html' as html;
-import 'dart:js_util' as js_util;
+import 'package:web/web.dart' as web;
 
 /// [Uint8] is not defined for Flutter Web. This is just a dummy definition.
 class Uint8 {}
@@ -24,17 +25,16 @@ int _fakeAddress = 0;
 
 /// Associate an address with the specified buffer and return the address.
 int pinBufferByFakeAddress(Uint8List buffer) {
-  js_util.setProperty(html.window, 'pdf_render_buffer_$_fakeAddress', buffer);
+  web.window.setProperty('pdf_render_buffer_$_fakeAddress'.toJS, buffer.toJS);
   return _fakeAddress++;
 }
 
 /// Get the associated buffer for the address.
 Uint8List getBufferByFakeAddress(int address) {
-  return js_util.getProperty(html.window, 'pdf_render_buffer_$address')
-      as Uint8List;
+  return (web.window.getProperty('pdf_render_buffer_$address'.toJS) as JSUint8Array).toDart;
 }
 
 /// Release the associated buffer for the address.
 void unpinBufferByFakeAddress(int address) {
-  js_util.setProperty(html.window, 'pdf_render_buffer_$address', null);
+  web.window.setProperty('pdf_render_buffer_$address'.toJS, null);
 }
